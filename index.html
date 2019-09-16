@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Shopping List App</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="main.css">
+        <body>
+            <div id="shopping-list">
+                <div class="header">
+                    <h1>{{ header.toLocaleUpperCase() }}</h1>
+                    <button v-if="state === 'default'" class="btn btn-primary" @click="changeState('edit')">Add Item</button>
+                    <button v-else class="btn btn-cancel" @click="changeState('default')">Cancel</button>
+                </div>
+                <div v-if="state === 'edit'" class="add-item-form">
+                    <input v-model="newItem" @keyup.enter="saveItem" type="text" placeholder="Add an item">
+                    <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
+                </div>
+                <ul>
+                    <li v-for="item in reversedItems" :class="{strikeout: item.purchased}" @click="togglePurchased(item)">{{ item.label }}</li>
+                </ul>
+                <p v-if="items.length === 0">Nice job! You've bought all your items.</p>
+            </div>
+            <script src="https://unpkg.com/vue"></script>
+            <script>
+                var shoppingList = new Vue({
+                    el: '#shopping-list',
+                    data: {
+                        state: 'default',
+                        header: 'Shopping List App',
+                        newItem: '',
+                        items: [
+                            {
+                                label: '10 party hats',
+                                purchased: false,
+                                highPriority: false,    
+                            },
+                            {
+                                label: '2 board games',
+                                purchased: true,
+                                highPriority: false,
+                            },
+                            {
+                                label: '20 cups',
+                                purchased: false,
+                                highPriority: true,
+                            }
+                        ]
+                    },
+                    computed: { 
+                        reversedItems() {
+                            return this.items.slice(0).reverse();
+                        }
+                    },
+                    methods: {
+                        saveItem: function() {
+                            this.items.push({
+                                label: this.newItem,
+                                purchased: false,
+                            },);
+                            this.newItem = '';
+                        },
+                        changeState: function(newState) {
+                            this.state = newState;
+                            this.newItem = '';
+                        },
+                        togglePurchased: function(item) {
+                            item.purchased = !item.purchased;
+                        }
+                    }
+                });
+            </script>
+        </body>
+    </head>
+</html>
